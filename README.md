@@ -14,7 +14,7 @@ The backend is documented using **Swagger UI**, providing a live, interactive in
 
 | Layer | Technology |
 |---|---|
-| Language | Java 17 |
+| Language | Java 21 |
 | Framework | Spring Boot 4 |
 | Security | Spring Security + JWT |
 | Database | H2 |
@@ -61,10 +61,10 @@ cd finance-dashboard
 Update `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:h2:file:./data/financedb
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+spring.datasource.username=sa
+spring.datasource.password=
+spring.h2.console.enabled=true
 spring.jpa.hibernate.ddl-auto=update
-
 app.jwt.secret=your_jwt_secret_key
 app.jwt.expiration=86400000
 ```
