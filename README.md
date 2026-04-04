@@ -93,6 +93,20 @@ Public registration always assigns the `VIEWER` role by default. An `ADMIN` can 
 
 ---
 
+## Access Control Matrix
+
+| Action | VIEWER | ANALYST | ADMIN |
+|---|---|---|---|
+| View records | ✅ | ✅ | ✅ |
+| Filter records | ✅ | ✅ | ✅ |
+| View dashboard | ❌ | ✅ | ✅ |
+| Create record | ❌ | ❌ | ✅ |
+| Update record | ❌ | ❌ | ✅ |
+| Delete record | ❌ | ❌ | ✅ |
+| Manage users | ❌ | ❌ | ✅ |
+
+---
+
 ## API Overview
 
 ### Auth — `/auth`
