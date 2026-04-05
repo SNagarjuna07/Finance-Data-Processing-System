@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +29,28 @@ public class AdminService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public void register(RegisterRequest registerRequest) {
+
+        userRepository.findByEmail(registerRequest.email())
+                .ifPresent(user ->
+                        {
+                            throw new DuplicateEmailException("An account with this email already exists");
+                        }
+                );
+
+        User user = new User();
+
+        user.setName(registerRequest.name());
+        user.setEmail(registerRequest.email());
+        user.setPassword(passwordEncoder.encode(registerRequest.password()));
+        user.setRole(Role.VIEWER);
+        user.setStatus(Status.ACTIVE);
+        user.setCreatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
 
     @Transactional
     public void registerAdmin(RegisterRequest registerRequest) {

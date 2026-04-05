@@ -29,27 +29,7 @@ public class AuthService {
 
     private final CustomUserDetailsService userDetailsService;
 
-    @Transactional
-    public void register(RegisterRequest registerRequest) {
 
-        userRepository.findByEmail(registerRequest.email())
-                .ifPresent(user ->
-                        {
-                            throw new DuplicateEmailException("An account with this email already exists");
-                        }
-                );
-
-        User user = new User();
-
-        user.setName(registerRequest.name());
-        user.setEmail(registerRequest.email());
-        user.setPassword(passwordEncoder.encode(registerRequest.password()));
-        user.setRole(Role.VIEWER);
-        user.setStatus(Status.ACTIVE);
-        user.setCreatedAt(LocalDateTime.now());
-
-        userRepository.save(user);
-    }
 
     public String login(LoginRequest loginRequest) {
 

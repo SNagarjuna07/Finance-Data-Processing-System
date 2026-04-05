@@ -25,6 +25,18 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    @PostMapping("/create-user")
+    @Operation(description = "Allows an Admin to create a user.")
+    public ResponseEntity<String> registerUser(
+            @Valid @RequestBody RegisterRequest registerRequest
+    ) {
+
+        adminService.register(registerRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Registered successfully.");
+    }
+
     @Operation(description = "Allows an admin to create a user as Admin.")
     @PostMapping("/create-admin")
     public ResponseEntity<String> registerAdmin(

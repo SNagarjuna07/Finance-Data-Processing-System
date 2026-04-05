@@ -19,18 +19,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
-    @Operation(description = "Allows a user to register.")
-    public ResponseEntity<String> registerUser(
-            @Valid @RequestBody RegisterRequest registerRequest
-    ) {
-
-        authService.register(registerRequest);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Registered successfully. Now you can login.");
-    }
-
     @PostMapping("/login")
     @Operation(description = "Allows registered users to login.")
     public ResponseEntity<String> login(

@@ -27,9 +27,9 @@ public class SwaggerConfig {
                                 )
                 )
                 .tags(List.of(
-                        new Tag().name("User APIs").description("Register and Login Users."),
+                        new Tag().name("User APIs").description("Allows to login Users."),
                         new Tag().name("Financial Record APIs").description("Add, Delete, Update, View-All, View-by-filters Financial Records."),
-                        new Tag().name("Admin APIs").description("Allows an Admin to create an Admin or Analyst. Update the role of the user and the user's profile status."),
+                        new Tag().name("Admin APIs").description("Allows an Admin to create an Admin or Analyst or a User. Allows updating the role of the user and the user's profile status."),
                         new Tag().name("Dashboard APIs").description("Get summaries of the financial records.")
                         ))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
