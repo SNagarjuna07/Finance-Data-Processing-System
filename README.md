@@ -26,16 +26,17 @@ The backend is documented using **Swagger UI**, providing a live, interactive in
 ---
 
 ## Project Structure
-
 ```
 com.finance.dashboard
-├── config/          # Security config, JWT filter, beans
+├── config/          # Security config, Swagger config, beans
 ├── controller/      # REST controllers
 ├── service/         # Business logic
 ├── repository/      # JPA repositories
 ├── entity/          # JPA entities
 ├── dto/             # Request and response records
 ├── enums/           # Role, Status, Type, Category
+├── filter/          # JWT authentication filter
+├── security/        # Custom 401 (AuthenticationEntryPoint) and 403 (AccessDeniedHandler) handlers
 └── exception/       # Custom exceptions + GlobalExceptionHandler
 ```
 
@@ -45,7 +46,7 @@ com.finance.dashboard
 
 ### Prerequisites
 
-- Java 17+
+- Java 21
 - Maven 3.8+
 
 ### Setup
@@ -56,28 +57,43 @@ git clone https://github.com/SNagarjuna07/finance-dashboard.git
 cd finance-dashboard
 ```
 
-**2. Configure the database**
 
-Update `src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:h2:file:./data/financedb
-spring.datasource.username=sa
-spring.datasource.password=
-spring.h2.console.enabled=true
-spring.jpa.hibernate.ddl-auto=update
-app.jwt.secret=your_jwt_secret_key
-app.jwt.expiration=86400000
-```
-
-**3. Run the application**
+**2. Run the application**
 ```bash
 mvn spring-boot:run
 ```
 
-**4. Access Swagger UI**
+**3. Access Swagger UI**
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/api/swagger-ui/index.html
 ```
+
+---
+
+## Quick Start Guide
+
+On startup, a seed **ADMIN** account is automatically created:
+
+| Field | Value |
+|---|---|
+| Email | `admin@finance.com` |
+| Password | `admin123` |
+
+### Step 1 — Login as ADMIN
+
+Call `POST /api/auth/login` with the seed credentials to get a JWT token:
+```json
+{
+  "email": "admin@finance.com",
+  "password": "admin123"
+}
+```
+
+Copy the token from the response.
+
+### Step 2 — Authorize in Swagger
+
+Click the **Authorize** button at the top right of Swagger UI and paste the token:
 
 ---
 
@@ -109,21 +125,20 @@ Public registration always assigns the `VIEWER` role by default. An `ADMIN` can 
 
 ## API Overview
 
-### Auth — `/auth`
+### Auth — `/api/auth`
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/auth/register` | Public | Register as VIEWER |
-| POST | `/auth/login` | Public | Login and receive JWT |
+| POST | `/api/auth/login` | Public | Login and receive JWT |
 
-### Financial Records — `/records`
+### Financial Records — `/api/records`
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/records` | ADMIN | Create a record for a user |
-| GET | `/records` | VIEWER, ANALYST, ADMIN | Get records with optional filters |
-| PATCH | `/records/{id}` | ADMIN | Update a record |
-| DELETE | `/records/{id}` | ADMIN | Soft delete a record |
+| POST | `/api/records` | ADMIN | Create a record for a user |
+| GET | `/api/records` | VIEWER, ANALYST, ADMIN | Get records with optional filters |
+| PATCH | `/api/records/{id}` | ADMIN | Update a record |
+| DELETE | `/api/records/{id}` | ADMIN | Soft delete a record |
 
-**Supported filters on `GET /records`:**
+**Supported filters on `GET /api/records`:**
 ```
 ?category=FOOD
 ?type=INCOME
@@ -132,22 +147,23 @@ Public registration always assigns the `VIEWER` role by default. An `ADMIN` can 
 ?page=0&size=10&sortBy=amount
 ```
 
-### Dashboard — `/dashboard`
+### Dashboard — `/api/dashboard`
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| GET | `/dashboard/summary` | ANALYST, ADMIN | Total income, expenses, net balance |
-| GET | `/dashboard/by-category` | ANALYST, ADMIN | Totals grouped by category |
-| GET | `/dashboard/trends` | ANALYST, ADMIN | Monthly income and expense trends |
-| GET | `/dashboard/recent` | ANALYST, ADMIN | Recent records |
+| GET | `/api/dashboard/summary` | ANALYST, ADMIN | Total income, expenses, net balance |
+| GET | `/api/dashboard/by-category` | ANALYST, ADMIN | Totals grouped by category |
+| GET | `/api/dashboard/trends` | ANALYST, ADMIN | Monthly income and expense trends |
+| GET | `/api/dashboard/recent` | ANALYST, ADMIN | Recent records |
 
-### Admin — `/admin`
+### Admin — `/api/admin`
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/admin/create-admin` | ADMIN | Create a new ADMIN user |
-| POST | `/admin/create-analyst` | ADMIN | Create a new ANALYST user |
-| GET | `/admin` | ADMIN | List all users (paginated) |
-| PATCH | `/admin/{id}/role` | ADMIN | Update a user's role |
-| PATCH | `/admin/{id}/status` | ADMIN | Activate or deactivate a user |
+| POST | `/api/admin/create-user` | ADMIN | Create a new VIEWER user |
+| POST | `/api/admin/create-admin` | ADMIN | Create a new ADMIN user |
+| POST | `/api/admin/create-analyst` | ADMIN | Create a new ANALYST user |
+| GET | `/api/admin/users` | ADMIN | List all users (paginated) |
+| PATCH | `/api/admin/{id}/role` | ADMIN | Update a user's role |
+| PATCH | `/api/admin/{id}/status` | ADMIN | Activate or deactivate a user |
 
 ---
 
