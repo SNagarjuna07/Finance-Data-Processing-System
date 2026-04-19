@@ -181,4 +181,3 @@ Public registration always assigns the `VIEWER` role by default. An `ADMIN` can 
 ## Author
 
 **S Nagarjuna**  
-Backend Developer Intern Assignment — Zorvyn FinTech Pvt. Ltd.
